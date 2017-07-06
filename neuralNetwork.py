@@ -1,6 +1,6 @@
 #%%
 import numpy as np
-
+from numba import jit
 
 class NeuralNetwork:
     def __init__(self,inputSize,hiddenSize,outputSize,learningRate):
@@ -20,13 +20,13 @@ class NeuralNetwork:
     def sigmoid_prime(self, z):
         sig = self.sigmoid(z)
         return sig * (1 - sig)
-
+    
     def tanh(self, z):
         return np.tanh(z)
-
+    
     def tanh_prime(self, z):
         return 1 - np.tanh(z)**2
-
+    
     def feedForward(self, X):
 
         self.z2 = np.ravel(np.dot(self.V.T, X.reshape(X.shape[0], 1)))
@@ -37,12 +37,14 @@ class NeuralNetwork:
 
         yHat = self.sigmoid(self.z3)
         return yHat
-
+    
+    
     def crossEntropyError(self, X, y):
         self.yHat = self.feedForward(X)
         J = sum(-(np.multiply(y,np.log(self.yHat)) + np.multiply(1.0-y, np.log(1.0-self.yHat))))
         return J
-
+    
+    
     def crossEntropyErrorD(self, X, y):
         self.yHat = self.feedForward(X)
         d3 = self.yHat-y
@@ -57,17 +59,18 @@ class NeuralNetwork:
         dJdV = np.dot(X.reshape(X.shape[0], 1), d2.reshape(d2.shape[0], 1).T)
         
         return dJdV, dJdW
-
+    
     def crossEntropyGradients(self, X, y):
         dJdV, dJdW = self.crossEntropyErrorD(X, y)
         self.crossEntropyError(X, y)
         return dJdV, dJdW
 
-
+    
     def trainNetwork(self, X, y):
         gradient_V, gradient_W = self.crossEntropyGradients(X, y)
         self.W -= self.learningRate * gradient_W
         self.V -= self.learningRate * gradient_V
 
+    
     def predict(self, X):
         return self.feedForward(X)
