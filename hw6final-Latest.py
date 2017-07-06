@@ -5,7 +5,6 @@ import scipy.io as scio
 import matplotlib.pyplot as plt
 import time
 import csv
-from numba import jit
 
 
 # In[2]:
